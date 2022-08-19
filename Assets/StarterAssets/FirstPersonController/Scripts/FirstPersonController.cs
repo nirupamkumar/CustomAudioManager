@@ -108,6 +108,9 @@ namespace StarterAssets
 			// reset our timeouts on start
 			_jumpTimeoutDelta = JumpTimeout;
 			_fallTimeoutDelta = FallTimeout;
+
+			AudioManager.Manager.PlaySFX(SFXClip.Walking);
+			AudioManager.Manager.PlayMusic(MusicClip.AmbienceCave);
 		}
 
 		private void Update()
@@ -177,6 +180,8 @@ namespace StarterAssets
 
 				// round speed to 3 decimal places
 				_speed = Mathf.Round(_speed * 1000f) / 1000f;
+
+				//AudioManager.Manager.PlaySFX(SFXClip.Walking);
 			}
 			else
 			{
@@ -196,6 +201,8 @@ namespace StarterAssets
 
 			// move the player
 			_controller.Move(inputDirection.normalized * (_speed * Time.deltaTime) + new Vector3(0.0f, _verticalVelocity, 0.0f) * Time.deltaTime);
+
+			
 		}
 
 		private void JumpAndGravity()
