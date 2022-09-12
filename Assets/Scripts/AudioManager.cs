@@ -1,82 +1,96 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using DG.Tweening;
 
 public class AudioManager
 {
     private AudioSource audioSourceMusic;
     private AudioSource audioSourceSounds;
+
     private AudioRepository repository;
 
-    //private Transform playerTransform;
+    [Range(0f, 1f)] 
+    private float fadeIn;
+    [Range(0f, 1f)] 
+    private float fadeOut;
+    [Range(0f, 1f)] 
+    private float volume;
 
-    [Range(0f, 1f)] private float fadeIn;
-    [Range(0f, 1f)] private float fadeOut;
-
-    [Range(0f, 1f)] private float volume;
-
-    private static AudioManager manager;
+    //-----Singleton
+    private static AudioManager _manager;
 
     public static AudioManager Manager
     {
         get
         {
-            if(manager != null)
+            if(_manager != null)
             {
-                return manager;
+                return _manager;
             }
             else
             {
-                var audioManagerGO = new GameObject();
-                audioManagerGO.name = "Audio Manager";
-                var audioSourceComponent = audioManagerGO.AddComponent<AudioSource>();
-                GameObject.DontDestroyOnLoad(audioManagerGO);
+                //-----isMusic
+                var audioManagerGOMusic = new GameObject();
+                audioManagerGOMusic.name = "Audio Manager Music";
+                var audioSourceComponentMusic = audioManagerGOMusic.AddComponent<AudioSource>();
+                audioSourceComponentMusic.loop = true;
+                GameObject.DontDestroyOnLoad(audioManagerGOMusic);
 
-                manager = new AudioManager();
-                manager.audioSourceMusic = audioSourceComponent;
+                _manager = new AudioManager();
+                _manager.audioSourceMusic = audioSourceComponentMusic;
 
-                manager.repository = GameObject.FindObjectOfType<AudioRepository>();
+                //-----isSounds
+                var audioManagerGoSounds = new GameObject();
+                audioManagerGoSounds.name = "Audio Manager Sounds";
+                var audioSourceComponentSounds = audioManagerGoSounds.AddComponent<AudioSource>();
+                GameObject.DontDestroyOnLoad(audioManagerGoSounds);
 
-                //GameObject go = GameObject.Find("PlayerCapsule");
-                //manager.playerTransform = go.GetComponent<Transform>();
+                _manager.audioSourceSounds = audioSourceComponentSounds;
 
-                return manager;
+                _manager.repository = GameObject.FindObjectOfType<AudioRepository>();
+
+                return _manager;
             }
            
         }
     }
 
-    public void PlaySFX(SFXClip fXClip)
-    {
-        audioSourceMusic.PlayOneShot(repository.ClipForSFX(fXClip));
-    }
-
+    #region Music
     public void PlayMusic(MusicClip musicClip)
     {
-        audioSourceMusic.PlayOneShot(repository.ClipForMusic(musicClip));
-    }
+        //audioSourceMusic.PlayOneShot(repository.ClipForMusic(musicClip));
 
-    public void PlayerPosition(SFXClip clip, Transform transform)
+        audioSourceMusic.loop = true;
+        audioSourceMusic.clip = repository.ClipForMusic(musicClip);
+        audioSourceMusic.Play();
+    }
+    #endregion
+
+
+    #region SFX
+    public void PlaySFX(SFXClip fXClip)
     {
-        audioSourceMusic.PlayOneShot(repository.ClipForSFX(clip));
+        audioSourceSounds.PlayOneShot(repository.ClipForSFX(fXClip));
     }
 
+    public void PlaySFX(SFXClip fXClip, Vector3 vector3)
+    {
+        audioSourceSounds.PlayOneShot(repository.ClipForSFX(fXClip));
+    }
+    #endregion
 
 
     public void FadeIn(float value)
     {
-        manager.fadeIn = value;
+        _manager.fadeIn = value;
     }
 
     public void FadeOut(float value)
     {
-        manager.fadeOut = value;
+        _manager.fadeOut = value;
     }
 
-    public void GameVolume(AudioSource source, float volume)
-    {
-       source.volume = volume;
-    }
 
     public void PrintSomething(string name)
     {

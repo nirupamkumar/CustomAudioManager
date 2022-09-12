@@ -109,8 +109,11 @@ namespace StarterAssets
 			_jumpTimeoutDelta = JumpTimeout;
 			_fallTimeoutDelta = FallTimeout;
 
+
+			//-----AudioManager test 
 			AudioManager.Manager.PlaySFX(SFXClip.Walking);
 			AudioManager.Manager.PlayMusic(MusicClip.AmbienceCave);
+			//AudioManager.Manager.PlaySFX(SFXClip.spell, new Vector3(0.9f, 1, 5.2f));
 		}
 
 		private void Update()
